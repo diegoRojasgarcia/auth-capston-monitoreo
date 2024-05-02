@@ -36,7 +36,7 @@ describe('UsuarioService', () => {
   it('should create a new user record and return that', async () => {
     expect(
       await service.createUser({
-        name: 'testuser',
+        nombre: 'testuser',
         email: 'test@gmail.com',
         password: 'Vgryq178',
       }),

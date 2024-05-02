@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Param, ParseUUIDPipe } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import {
   CreateUserDto,
@@ -27,8 +27,8 @@ export class AuthController {
     return this.authService.validate(payload);
   }
 
-  @GrpcMethod('AuthService', 'findUserById')
-  findUserById(payload: FindUserIdDto) {
+  @GrpcMethod('AuthService', 'FindUserById')
+  FindUserById(payload: FindUserIdDto) {
     return this.authService.findUserbyId(payload);
   }
 }

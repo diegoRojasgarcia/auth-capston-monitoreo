@@ -11,13 +11,13 @@ export class AuthService {
     private usuarioService: UsuarioService,
   ) {}
 
-  async register({ email, password, name }: CreateUserDto) {
+  async register({ email, password, nombre }: CreateUserDto) {
     let auth = await this.usuarioService.findOnebyEmail(email);
     if (auth) {
       return { status: HttpStatus.CONFLICT, error: ['E-Mail already exists'] };
     }
     await this.usuarioService.createUser({
-      name,
+      nombre,
       email,
       password: bcrypt.hashSync(password, 10),
     });
@@ -31,7 +31,7 @@ export class AuthService {
         status: HttpStatus.NOT_FOUND,
         error: ['E-Mail not found'],
         token: null,
-        idUser: null,
+        user: null,
       };
     }
     if (!bcrypt.compareSync(password, userdb.password))
@@ -39,14 +39,14 @@ export class AuthService {
         status: HttpStatus.NOT_FOUND,
         error: ['Password wrong'],
         token: null,
-        idUser: null,
+        user: null,
       };
     const token = this.getJwtToken({ id: userdb.id });
     return {
       status: HttpStatus.OK,
       error: null,
       token: token,
-      idUser: userdb.id,
+      user: userdb.id,
     };
   }
 
@@ -57,7 +57,7 @@ export class AuthService {
         return {
           status: HttpStatus.FORBIDDEN,
           error: ['Token is invalid'],
-          userId: null,
+          user: null,
         };
       }
       const id = decoded.id;
@@ -66,15 +66,15 @@ export class AuthService {
         return {
           status: HttpStatus.CONFLICT,
           error: ['User not found'],
-          userId: null,
+          user: null,
         };
       }
-      return { status: HttpStatus.OK, error: null, userId: decoded.id };
+      return { status: HttpStatus.OK, error: null, user: decoded.id };
     } catch (error) {
       return {
         status: HttpStatus.FORBIDDEN,
         error: ['Token is invalid'],
-        userId: null,
+        user: null,
       };
     }
   }
@@ -85,13 +85,13 @@ export class AuthService {
       return {
         status: HttpStatus.CONFLICT,
         error: ['User not found'],
-        userId: null,
+        user: null,
       };
     }
     return { status: HttpStatus.OK, error: null, user: userdb };
   }
 
-  private getJwtToken(payload: { id: number }) {
+  private getJwtToken(payload: { id: string }) {
     const token = this.JwtService.sign(payload);
     return token;
   }
